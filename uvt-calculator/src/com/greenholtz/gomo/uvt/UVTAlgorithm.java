@@ -15,7 +15,8 @@ public class UVTAlgorithm {
 				id++;
 			}
 		}
-		algorithm(times);
+		List<TimeStamp> uniqueSegments = getUniqueViewSegments(times);
+		System.out.println(calculateUniqueViewTime(uniqueSegments));;
 	}
 	
 	/**
@@ -28,7 +29,12 @@ public class UVTAlgorithm {
 		System.out.println(sb);
 	}
 	
-	public static void algorithm(List<TimeStamp> times) {
+	public static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
+		
+		return 0l;
+	}
+	
+	public static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
 		
 		// Step 1 - Sort
@@ -44,7 +50,6 @@ public class UVTAlgorithm {
 		// Step 3 - Figure out what times are in between the start and end of part 2
 		int startFinalTimePosition = times.indexOf(startFinalTime);
 		List<TimeStamp> intermediaryTimestamps = times.subList(startFinalTimePosition+1, times.size()-1);
-		System.out.println(intermediaryTimestamps);
 		
 		//Step 4 - Which end has a start that is farthest away?
 		List<TimeStamp> ends = intermediaryTimestamps.stream()
@@ -55,32 +60,32 @@ public class UVTAlgorithm {
 				.filter(t->intermediaryTimestamps.stream()
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
 				.findFirst().get();
-		uniqueSegments.add(uniqueEndFarthest);
 		
+		// Trim list of dups
+		times = times.subList(0, times.indexOf(startFinalTime));
+		System.out.println(times);
 		
+		// Get the start matching that end
+		TimeStamp farthestTime = times.stream()
+				.filter(t->t.getType()==TimestampType.START)
+				.filter(t->t.getId()==uniqueEndFarthest.getId())
+				.findFirst()
+				.get();
+		uniqueSegments.add(farthestTime);
 		
-//		List<TimeStamp> starts = intermediaryTimestamps.stream().filter(t->t.getType()==TimestampType.START).collect(Collectors.toList());
-//		List<TimeStamp> ends = intermediaryTimestamps.stream().filter(t->t.getType()==TimestampType.END).collect(Collectors.toList());
-
-//		System.out.println("Starts Before: " + starts);
-//		System.out.println("Ends: " + ends);
-//		List<TimeStamp> unmatchedStarts = new ArrayList<>();
-//		for (TimeStamp start : starts) {
-//			if (ends.stream().noneMatch(e->e.getIndex()==start.getIndex())) {
-//				unmatchedStarts.add(start);
-//			}
-//		}
-//		System.out.println("After: " + unmatchedStarts);
+		// Remove from original list
+		times.remove(farthestTime);
 		
-//		TimeStamp farthestAway = intermediaryTimestamps.stream().min(Comparator.comparing(TimeStamp::getIndex)).get();
-//		System.out.println(farthestAway);
-//		
-//		//Step 5 - Have we reached the beginning of the list?
-//		if (times.indexOf(farthestAway) == 0) {
-//			System.out.println("calculate");
-//		} else {
-//			System.out.println("continue");
-//		}
+		// Step 5 - Are there more left in the original list?
+		if (times.size()==0) {
+			System.out.println("end");
+			System.out.println("Unique Segments: " + uniqueSegments);
+		} else {
+			System.out.println("continue");
+			// maybe some recursion here?
+		}
+		
+		return uniqueSegments;
 	}
 	
 	/**
