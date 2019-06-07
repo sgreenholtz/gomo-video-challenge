@@ -36,6 +36,11 @@ public class UVTAlgorithm {
 		int finalIndex = times.get(times.size()-1).getIndex();
 		TimeStamp startFinalTime = times.stream().filter(t->t.getIndex()==finalIndex).filter(t->t.getType()==TimestampType.START).findFirst().orElse(null);
 		System.out.println(startFinalTime);
+		
+		// Step 3 - Figure out what times are in between the start and end of part 2
+//		List<TimeStamp> intermediaryTimestamps = times.stream().filter(arg0)
+		int position = times.indexOf(startFinalTime);
+		System.out.println(position);
 	}
 	
 	/**
