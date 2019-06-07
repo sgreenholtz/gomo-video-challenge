@@ -16,7 +16,7 @@ public class UVTAlgorithm {
 			}
 		}
 		List<TimeStamp> uniqueSegments = getUniqueViewSegments(times);
-		System.out.println(calculateUniqueViewTime(uniqueSegments));;
+		System.out.println(calculateUniqueViewTime(uniqueSegments));
 	}
 	
 	/**
@@ -30,8 +30,16 @@ public class UVTAlgorithm {
 	}
 	
 	public static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
-		
-		return 0l;
+		return calculateUVTFromSegmentList(uniqueSegments, 0l);
+	}
+	
+	private static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
+		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
+		uniqueSegments.remove(uniqueSegments.get(0));
+		if (uniqueSegments.size()>1) {
+			runningTotal = calculateUVTFromSegmentList(uniqueSegments, runningTotal);
+		}
+		return runningTotal;
 	}
 	
 	public static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
