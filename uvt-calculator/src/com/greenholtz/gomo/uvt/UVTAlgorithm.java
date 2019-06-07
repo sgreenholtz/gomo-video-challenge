@@ -38,9 +38,20 @@ public class UVTAlgorithm {
 		System.out.println(startFinalTime);
 		
 		// Step 3 - Figure out what times are in between the start and end of part 2
-//		List<TimeStamp> intermediaryTimestamps = times.stream().filter(arg0)
 		int position = times.indexOf(startFinalTime);
-		System.out.println(position);
+		List<TimeStamp> intermediaryTimestamps = times.subList(position+1, times.size()-1);
+		System.out.println(intermediaryTimestamps);
+		
+		//Step 4 - Which in between is the farthest away?
+		TimeStamp farthestAway = intermediaryTimestamps.stream().min(Comparator.comparing(TimeStamp::getIndex)).get();
+		System.out.println(farthestAway);
+		
+		//Step 5 - Have we reached the beginning of the list?\
+		if (times.indexOf(farthestAway) == 0) {
+			System.out.println("calculate");
+		} else {
+			System.out.println("continue");
+		}
 	}
 	
 	/**
