@@ -2,22 +2,22 @@ package com.greenholtz.gomo.uvt;
 
 public class TimeStamp implements Comparable<TimeStamp> {
 
-	private int index;
+	private int id;
 	private TimestampType type;
 	private Long timeMilis;
 	
-	public TimeStamp(int index, TimestampType type, Long timeMilis) {
-		this.index=index;
+	public TimeStamp(int id, TimestampType type, Long timeMilis) {
+		this.id=id;
 		this.timeMilis=timeMilis;
 		this.type=type;
 	}
 	
-	public int getIndex() {
-		return index;
+	public int getId() {
+		return id;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public TimestampType getType() {
@@ -42,11 +42,12 @@ public class TimeStamp implements Comparable<TimeStamp> {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder("(").append(index).append(type.shortDisplay()).append(")").append(timeMilis).toString();
+		return new StringBuilder("(").append(id).append(type.shortDisplay()).append(")").append(timeMilis).toString();
 	}
-
+	
 	@Override
 	public int compareTo(TimeStamp timeToCompare) {
 		return this.getTimeMilis().compareTo(timeToCompare.getTimeMilis());
 	}
+	
 }
