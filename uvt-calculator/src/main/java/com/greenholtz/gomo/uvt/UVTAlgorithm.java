@@ -1,13 +1,35 @@
 package com.greenholtz.gomo.uvt;
 import java.util.*;
 import java.util.stream.Collectors;
-public class UVTAlgorithm {
 
-	public static void main(String[] args) {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class UVTAlgorithm {
+	
+	private static Logger logger = LoggerFactory.getLogger(UVTAlgorithm.class);
+	
+	public static void uniqueViewTimeCalculator(String times) {
+		logger.info("Starting to calculate the Unique View Time (UVT)");
+		logger.info("First, we parse out the view time segements inputted into the application.");
+		List<TimeStamp> timeStamps = parseTimeSegments(times);
+		
+		logger.info("Next, we sort the time segments according to the timestamp in milliseconds.");
+		sort(timeStamps);
+		logger.debug(timeStamps.toString());
+		
+//		List<TimeStamp> uniqueSegments = getUniqueViewSegments(times);
+//		System.out.println(calculateUniqueViewTime(uniqueSegments));
+	}
+	
+	public static List<TimeStamp> parseTimeSegments(String times) {
+		return parseTimeSegments(times.split(" "));
+	}
+
+	public static List<TimeStamp> parseTimeSegments(String[] timeArr) {
 		List<TimeStamp> times = new ArrayList<>();
 		int id = 0;
-		for (int i=0; i<args.length; i++) {
-			Long time = Long.parseLong(args[i]);
+		for (int i=0; i<timeArr.length; i++) {
+			Long time = Long.parseLong(timeArr[i]);
 			if (i % 2 == 0) {
 				times.add(new TimeStamp(id, TimestampType.START, time));
 			} else {
@@ -15,16 +37,11 @@ public class UVTAlgorithm {
 				id++;
 			}
 		}
-		List<TimeStamp> uniqueSegments = getUniqueViewSegments(times);
-		System.out.println(calculateUniqueViewTime(uniqueSegments));
+		return times;
 	}
 	
 	public static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
-		
-		// Step 1 - Sort
-		sort(times);
-		System.out.println(times);
 		
 		// Step 2 - Look at the last end time. Find its matching start time and its position
 		int finalTimeId = times.get(times.size()-1).getId();
