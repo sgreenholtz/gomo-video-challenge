@@ -19,29 +19,6 @@ public class UVTAlgorithm {
 		System.out.println(calculateUniqueViewTime(uniqueSegments));
 	}
 	
-	/**
-	 * For display purposes only, shows the values as they have been parsed into a list
-	 * @param times
-	 */
-	public static void parseCheck(List<TimeStamp> times) {
-		StringBuilder sb = new StringBuilder();
-		times.forEach(t->sb.append(t).append(" "));
-		System.out.println(sb);
-	}
-	
-	public static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
-		return calculateUVTFromSegmentList(uniqueSegments, 0l);
-	}
-	
-	private static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
-		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
-		uniqueSegments.remove(uniqueSegments.get(0));
-		if (uniqueSegments.size()>1) {
-			runningTotal = calculateUVTFromSegmentList(uniqueSegments, runningTotal);
-		}
-		return runningTotal;
-	}
-	
 	public static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
 		
@@ -104,6 +81,30 @@ public class UVTAlgorithm {
 	public static List<TimeStamp> sort(List<TimeStamp> times) {
 		Collections.sort(times);
 		return times;
+	}
+	
+	/**
+	 * For display purposes only, shows the values as they have been parsed into a list
+	 * @param times
+	 */
+	public static void parseCheck(List<TimeStamp> times) {
+		StringBuilder sb = new StringBuilder();
+		times.forEach(t->sb.append(t).append(" "));
+		System.out.println(sb);
+	}
+	
+	
+	public static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
+		return calculateUVTFromSegmentList(uniqueSegments, 0l);
+	}
+	
+	private static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
+		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
+		uniqueSegments.remove(uniqueSegments.get(0));
+		if (uniqueSegments.size()>1) {
+			runningTotal = calculateUVTFromSegmentList(uniqueSegments, runningTotal);
+		}
+		return runningTotal;
 	}
 
 }
