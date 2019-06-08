@@ -4,6 +4,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.greenholtz.gomo.uvt.entities.TimeStamp;
+import com.greenholtz.gomo.uvt.entities.TimestampType;
 public class UVTAlgorithm {
 	
 	private static Logger logger = LoggerFactory.getLogger(UVTAlgorithm.class);
@@ -12,20 +15,27 @@ public class UVTAlgorithm {
 		logger.info("Starting to calculate the Unique View Time (UVT)");
 		logger.info("First, we parse out the view time segements inputted into the application.");
 		List<TimeStamp> timeStamps = parseTimeSegments(times);
+		logger.info("Parsed!");
 		
 		logger.info("Next, we sort the time segments according to the timestamp in milliseconds.");
 		sort(timeStamps);
 		logger.debug(timeStamps.toString());
+		logger.info("Sorted!");
 		
-//		List<TimeStamp> uniqueSegments = getUniqueViewSegments(times);
-//		System.out.println(calculateUniqueViewTime(uniqueSegments));
+		logger.info("Next, we figure out which time segments are overlapping and which are unique.");
+		List<TimeStamp> uniqueSegments = getUniqueViewSegments(timeStamps);
+		logger.info("These are the unique segments of view time: " + uniqueSegments);
+		
+		logger.info("Finally, we find the view time between each unique segment and add it up.");
+		long uniqueViewTime = calculateUniqueViewTime(uniqueSegments);
+		logger.info("Here is the calculated UVT: " + uniqueViewTime);
 	}
 	
-	public static List<TimeStamp> parseTimeSegments(String times) {
+	static List<TimeStamp> parseTimeSegments(String times) {
 		return parseTimeSegments(times.split(" "));
 	}
 
-	public static List<TimeStamp> parseTimeSegments(String[] timeArr) {
+	static List<TimeStamp> parseTimeSegments(String[] timeArr) {
 		List<TimeStamp> times = new ArrayList<>();
 		int id = 0;
 		for (int i=0; i<timeArr.length; i++) {
@@ -40,7 +50,7 @@ public class UVTAlgorithm {
 		return times;
 	}
 	
-	public static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
+	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
 		
 		// Step 2 - Look at the last end time. Find its matching start time and its position
@@ -81,11 +91,13 @@ public class UVTAlgorithm {
 		// Step 5 - Are there more left in the original list?
 		if (times.size()==0) {
 			System.out.println("end");
-			System.out.println("Unique Segments: " + uniqueSegments);
 		} else {
 			System.out.println("continue");
 			// maybe some recursion here?
 		}
+		
+		// Put the times back in time order
+		Collections.reverse(uniqueSegments);
 		
 		return uniqueSegments;
 	}
@@ -95,7 +107,7 @@ public class UVTAlgorithm {
 	 * @param times
 	 * @return a List of TimeStamp times sorted by milliseconds 
 	 */
-	public static List<TimeStamp> sort(List<TimeStamp> times) {
+	static List<TimeStamp> sort(List<TimeStamp> times) {
 		Collections.sort(times);
 		return times;
 	}
@@ -104,18 +116,18 @@ public class UVTAlgorithm {
 	 * For display purposes only, shows the values as they have been parsed into a list
 	 * @param times
 	 */
-	public static void parseCheck(List<TimeStamp> times) {
+	static void parseCheck(List<TimeStamp> times) {
 		StringBuilder sb = new StringBuilder();
 		times.forEach(t->sb.append(t).append(" "));
 		System.out.println(sb);
 	}
 	
 	
-	public static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
+	static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
 		return calculateUVTFromSegmentList(uniqueSegments, 0l);
 	}
 	
-	private static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
+	static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
 		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
 		uniqueSegments.remove(uniqueSegments.get(0));
 		if (uniqueSegments.size()>1) {

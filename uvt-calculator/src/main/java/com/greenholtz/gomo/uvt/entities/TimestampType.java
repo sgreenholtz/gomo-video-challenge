@@ -1,4 +1,4 @@
-package com.greenholtz.gomo.uvt;
+package com.greenholtz.gomo.uvt.entities;
 
 public enum TimestampType {
 	START, END;

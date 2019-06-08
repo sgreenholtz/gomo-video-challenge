@@ -1,6 +1,8 @@
-package com.greenholtz.gomo.uvt;
+package com.greenholtz.gomo.uvt.launcher;
 
 import java.io.Console;
+
+import com.greenholtz.gomo.uvt.UVTAlgorithm;
 
 /**
  * Kick-off point for runnable jar
@@ -19,6 +21,7 @@ public class Launcher {
 		} else if (args[0].equals("input")) {
 			Console console = System.console();
 			String timeSegmentString = console.readLine("Input view time segments: ");
+			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentString);
 		} else {
 			// insert text stating the only options are "help" or "input"
 		}
