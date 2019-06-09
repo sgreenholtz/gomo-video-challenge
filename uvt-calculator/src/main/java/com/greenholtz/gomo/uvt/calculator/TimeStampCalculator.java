@@ -19,6 +19,10 @@ public class TimeStampCalculator {
 			uniqueSegments.remove(0);
 			uniqueSegments.remove(0);
 		}
+		if (uniqueSegments.size()==2
+				&& uniqueSegments.get(0).getId()==uniqueSegments.get(1).getId()) {
+			runningTotal += addFirstDifference(uniqueSegments.get(0), uniqueSegments.get(1));
+		}
 		return runningTotal;
 	}
 	
