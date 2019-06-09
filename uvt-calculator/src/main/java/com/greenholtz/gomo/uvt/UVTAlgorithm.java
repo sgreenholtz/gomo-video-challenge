@@ -11,10 +11,10 @@ public class UVTAlgorithm {
 	
 	private static Logger logger = LoggerFactory.getLogger(UVTAlgorithm.class);
 	
-	public static void uniqueViewTimeCalculator(String times) {
+	public static void uniqueViewTimeCalculator(String allViewTimestamps) {
 		logger.info("Starting to calculate the Unique View Time (UVT)");
 		logger.info("First, we parse out the view time segements inputted into the application.");
-		List<TimeStamp> timeStamps = parseTimeSegments(times);
+		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
 		logger.info("Parsed!");
 		
 		logger.info("Next, we sort the time segments according to the timestamp in milliseconds.");
@@ -32,52 +32,52 @@ public class UVTAlgorithm {
 	}
 	
 	/**
-	 * Creates a list of TimeStamp objects from a string of times, delimited by
+	 * Creates a list of TimeStamp objects from a string of allViewTimestamps, delimited by
 	 * a space
-	 * @param times String
+	 * @param allViewTimestamps String
 	 * @return A list of TimeStamp objects
 	 */
-	static List<TimeStamp> parseTimeSegments(String times) {
-		return parseTimeSegments(times.split(" "));
+	static List<TimeStamp> parseTimeSegments(String allViewTimestamps) {
+		return parseTimeSegments(allViewTimestamps.split(" "));
 	}
 
 	/**
-	 * Creates a list of TimeStamp objects from an array of times
-	 * @param timeArr array of strings containing times
+	 * Creates a list of TimeStamp objects from an array of allViewTimestamps
+	 * @param timeArr array of strings containing allViewTimestamps
 	 * @return A list of TimeStamp objects
 	 */
 	static List<TimeStamp> parseTimeSegments(String[] timeArr) {
-		List<TimeStamp> times = new ArrayList<>();
+		List<TimeStamp> allViewTimestamps = new ArrayList<>();
 		int id = 0;
 		for (int i=0; i<timeArr.length; i++) {
 			Long time = Long.parseLong(timeArr[i]);
 			if (i % 2 == 0) {
-				times.add(new TimeStamp(id, TimestampType.START, time));
+				allViewTimestamps.add(new TimeStamp(id, TimestampType.START, time));
 			} else {
-				times.add(new TimeStamp(id, TimestampType.END, time));
+				allViewTimestamps.add(new TimeStamp(id, TimestampType.END, time));
 				id++;
 			}
 		}
-		return times;
+		return allViewTimestamps;
 	}
 	
-	static List<TimeStamp> getFinalUniqueSegment(List<TimeStamp> times) {
+	static List<TimeStamp> getFinalUniqueSegment(List<TimeStamp> allViewTimestamps) {
 		List<TimeStamp> segments = new ArrayList<>();
-		int finalTimeId = times.get(times.size()-1).getId();
-		TimeStamp startFinalTime = TimeStampUtils.getStartFromEnd(times, finalTimeId);
-		segments.add(times.get(times.size()-1));
+		int finalTimeId = allViewTimestamps.get(allViewTimestamps.size()-1).getId();
+		TimeStamp startFinalTime = TimeStampUtils.getStartFromEnd(allViewTimestamps, finalTimeId);
+		segments.add(allViewTimestamps.get(allViewTimestamps.size()-1));
 		segments.add(startFinalTime);
 		return segments;
 	}
 	
-	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> times, List<TimeStamp> segments) {
-		int startIndex = times.indexOf(segments.get(segments.size()-2));
-		int endIndex = times.indexOf(segments.get(segments.size()-1));
-		return times.subList(startIndex, endIndex);
+	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> allViewTimestamps, List<TimeStamp> segments) {
+		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-2));
+		int endIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1));
+		return allViewTimestamps.subList(startIndex, endIndex);
 	}
 	
 	static TimeStamp getStartTimeClosestToBeginningFromIntermediaryTimes(List<TimeStamp> intermediaryTimestamps,
-			List<TimeStamp> times) {
+			List<TimeStamp> allViewTimestamps) {
 		
 		List<TimeStamp> endingTimeStampsWithStartsNotInIntermediaryList = intermediaryTimestamps.stream()
 				.filter(t->t.getType()==TimestampType.END)
@@ -85,46 +85,39 @@ public class UVTAlgorithm {
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
 				.collect(Collectors.toList());
 		
-		return times.stream()
+		return allViewTimestamps.stream()
 				.filter(t->t.getType()==TimestampType.START)
-				.map(t->endingTimeStampsWithStartsNotInIntermediaryList.stream()
-						.filter(end->end.getId()==t.getId())
-						.findFirst()
-						.get())
+				.filter(t->endingTimeStampsWithStartsNotInIntermediaryList.stream()
+						.anyMatch(end->end.getId()==t.getId()))
 				.findFirst()
 				.get();
 	}
 	
-	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
+	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> allViewTimestamps) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
-		uniqueSegments.addAll(getFinalUniqueSegment(times));
-		List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(times, uniqueSegments);
-		TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, times);
-		uniqueSegments.add(farthestTime);
-		times = times.subList(0, times.indexOf(farthestTime));
+		uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
 		
-		// Step 5 - Are there more left in the original list?
-		if (times.size()==0) {
-			System.out.println("end");
-		} else {
-			System.out.println("continue");
-			// maybe some recursion here?
+		while (allViewTimestamps.size()>0) {
+			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
+			TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
+			uniqueSegments.add(farthestTime);
+			allViewTimestamps = allViewTimestamps.subList(0, allViewTimestamps.indexOf(farthestTime));
 		}
-		
-		// Put the times back in time order
+	
+		// Put the allViewTimestamps back in time order
 		Collections.reverse(uniqueSegments);
 		
 		return uniqueSegments;
 	}
 	
 	/**
-	 * Sorts the list of timestamp times according to milliseconds
-	 * @param times
-	 * @return a List of TimeStamp times sorted by milliseconds 
+	 * Sorts the list of timestamp allViewTimestamps according to milliseconds
+	 * @param allViewTimestamps
+	 * @return a List of TimeStamp allViewTimestamps sorted by milliseconds 
 	 */
-	static List<TimeStamp> sort(List<TimeStamp> times) {
-		Collections.sort(times);
-		return times;
+	static List<TimeStamp> sort(List<TimeStamp> allViewTimestamps) {
+		Collections.sort(allViewTimestamps);
+		return allViewTimestamps;
 	}
 	
 	
@@ -134,7 +127,7 @@ public class UVTAlgorithm {
 	
 	/**
 	 * Uses recursion to calculate the total unique view time by finding the
-	 * difference between the different start and end times. Sorted with last timestamp
+	 * difference between the different start and end allViewTimestamps. Sorted with last timestamp
 	 * first.
 	 * @param uniqueSegments List of TimeStamp object representing start and end
 	 * times of unique views

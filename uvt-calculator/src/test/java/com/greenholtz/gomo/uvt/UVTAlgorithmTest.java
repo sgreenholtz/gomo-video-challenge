@@ -39,7 +39,8 @@ public class UVTAlgorithmTest {
 
 	@Test
 	public void testGetUniqueViewSegments() {
-		fail("Not yet implemented");
+		List<TimeStamp> uniqueTimeStamps = UVTAlgorithm.getUniqueViewSegments(getTimeStampList());
+		Assert.assertEquals(0, uniqueTimeStamps.size());
 	}
 
 	@Test
@@ -99,18 +100,20 @@ public class UVTAlgorithmTest {
 	public void testGetStartTimeClosestToBeginningFromIntermediaryTimes() {
 		List<TimeStamp> times = getTimeStampList();
 		List<TimeStamp> intermediary = new ArrayList<>();
+		intermediary.add(new TimeStamp(1, TimestampType.START, 25l));
 		intermediary.add(new TimeStamp(3, TimestampType.END, 30l));
 		intermediary.add(new TimeStamp(1, TimestampType.END, 38l));
 		intermediary.add(new TimeStamp(0, TimestampType.END, 94l));
-		UVTAlgorithm.getStartTimeClosestToBeginningFromIntermediaryTimes(intermediary, times);
+		TimeStamp farthest = UVTAlgorithm.getStartTimeClosestToBeginningFromIntermediaryTimes(intermediary, times);
+		Assert.assertEquals(12l, (long)farthest.getTimeMilis());
 	}
 	
 	private ArrayList<TimeStamp> getTimeStampList() {
 		ArrayList<TimeStamp> times = new ArrayList<>();
 		times.add(new TimeStamp(0, TimestampType.START, 12l));
-		times.add(new TimeStamp(1, TimestampType.START, 14l));
 		times.add(new TimeStamp(3, TimestampType.START, 15l));
 		times.add(new TimeStamp(2, TimestampType.START, 20l));
+		times.add(new TimeStamp(1, TimestampType.START, 25l));
 		times.add(new TimeStamp(3, TimestampType.END, 30l));
 		times.add(new TimeStamp(1, TimestampType.END, 38l));
 		times.add(new TimeStamp(0, TimestampType.END, 94l));
