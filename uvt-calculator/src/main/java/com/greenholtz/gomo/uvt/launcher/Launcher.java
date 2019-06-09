@@ -1,8 +1,12 @@
 package com.greenholtz.gomo.uvt.launcher;
 
 import java.io.Console;
+import java.util.Arrays;
 
 import com.greenholtz.gomo.uvt.UVTAlgorithm;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 /**
  * Kick-off point for runnable jar
@@ -24,14 +28,25 @@ public class Launcher {
 				.append(System.lineSeparator())
 				.append("number is the timestamp of when the view STARTED, the second number is the timestamp of when the")
 				.append(System.lineSeparator())
-				.append("view ENDED, the next number is a START timestamp, the next number is an END timestamp, etc.");
-			System.out.println(helpMessage);
-		} else if (args[0].equals("input")) {
-			Console console = System.console();
-			String timeSegmentString = console.readLine("Input view time segments: ");
-			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentString);
-		} else {
-			System.out.println("Unknown option specified. The only available commands are 'help' and 'input'.");
+				.append("view ENDED, the next number is a START timestamp, the next number is an END timestamp, etc.")
+				.append(System.lineSeparator())
+				.append("You can also use the -i flag and input the timestamps, and use the -v flag to specify verbose output.");
+			System.out.println(helpMessage);			
+		} else if (args[0].equals("-v")) {
+			Logger root = (Logger) org.slf4j.LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		    root.setLevel(Level.DEBUG);
 		}
+		
+		if (Arrays.asList(args).contains("-i")) {
+			int inputFlagIndex = Arrays.asList(args).indexOf("-i");
+			String[] timeSegmentArr = Arrays.copyOfRange(args, inputFlagIndex+1, args.length-1);
+			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentArr);
+		} else {
+			Console console = System.console();
+			String timeSegmentsStr = console.readLine("Input view time segments: ");
+			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentsStr);
+		}
+		
 	}
+	
 }

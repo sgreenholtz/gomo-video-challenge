@@ -14,20 +14,30 @@ public class UVTAlgorithm {
 	
 	public static long uniqueViewTimeCalculator(String allViewTimestamps) {
 		logger.info("Starting to calculate the Unique View Time (UVT)");
-		logger.info("First, we parse out the view time segements inputted into the application.");
+		logger.debug("First, we parse out the view time segements inputted into the application.");
 		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
-		logger.info("Parsed!");
-		
-		logger.info("Next, we sort the time segments according to the timestamp in milliseconds.");
+		logger.debug("Parsed!");
+		return calculatorAlgorithmAfterParsingInput(timeStamps);
+	}
+	
+	public static long uniqueViewTimeCalculator(String[] allViewTimestamps) {
+		logger.info("Starting to calculate the Unique View Time (UVT)");
+		logger.debug("First, we parse out the view time segements inputted into the application.");
+		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
+		logger.debug("Parsed!");
+		return calculatorAlgorithmAfterParsingInput(timeStamps);
+	}
+	
+	private static long calculatorAlgorithmAfterParsingInput(List<TimeStamp> timeStamps) {
+		logger.debug("Next, we sort the time segments according to the timestamp in milliseconds.");
 		sort(timeStamps);
-		logger.debug(timeStamps.toString());
-		logger.info("Sorted!");
+		logger.debug("Sorted!");
 		
-		logger.info("Next, we figure out which time segments are overlapping and which are unique.");
+		logger.debug("Next, we figure out which time segments are overlapping and which are unique.");
 		List<TimeStamp> uniqueSegments = getUniqueViewSegments(timeStamps);
-		logger.info("These are the unique segments of view time: " + uniqueSegments);
+		logger.debug("These are the unique segments of view time: " + uniqueSegments);
 		
-		logger.info("Finally, we find the view time between each unique segment and add it up.");
+		logger.debug("Finally, we find the view time between each unique segment and add it up.");
 		long uniqueViewTime = calculateUniqueViewTime(uniqueSegments);
 		logger.info("Here is the calculated UVT: " + uniqueViewTime);
 		return uniqueViewTime;
