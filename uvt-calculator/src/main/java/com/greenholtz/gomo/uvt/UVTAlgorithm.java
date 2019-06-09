@@ -31,10 +31,21 @@ public class UVTAlgorithm {
 		logger.info("Here is the calculated UVT: " + uniqueViewTime);
 	}
 	
+	/**
+	 * Creates a list of TimeStamp objects from a string of times, delimited by
+	 * a space
+	 * @param times String
+	 * @return A list of TimeStamp objects
+	 */
 	static List<TimeStamp> parseTimeSegments(String times) {
 		return parseTimeSegments(times.split(" "));
 	}
 
+	/**
+	 * Creates a list of TimeStamp objects from an array of times
+	 * @param timeArr array of strings containing times
+	 * @return A list of TimeStamp objects
+	 */
 	static List<TimeStamp> parseTimeSegments(String[] timeArr) {
 		List<TimeStamp> times = new ArrayList<>();
 		int id = 0;
@@ -112,21 +123,20 @@ public class UVTAlgorithm {
 		return times;
 	}
 	
-	/**
-	 * For display purposes only, shows the values as they have been parsed into a list
-	 * @param times
-	 */
-	static void parseCheck(List<TimeStamp> times) {
-		StringBuilder sb = new StringBuilder();
-		times.forEach(t->sb.append(t).append(" "));
-		System.out.println(sb);
-	}
-	
 	
 	static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
 		return calculateUVTFromSegmentList(uniqueSegments, 0l);
 	}
 	
+	/**
+	 * Uses recursion to calculate the total unique view time by finding the
+	 * difference between the different start and end times. Sorted with last timestamp
+	 * first.
+	 * @param uniqueSegments List of TimeStamp object representing start and end
+	 * times of unique views
+	 * @param runningTotal 
+	 * @return Long of total unique view time
+	 */
 	static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
 		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
 		uniqueSegments.remove(uniqueSegments.get(0));

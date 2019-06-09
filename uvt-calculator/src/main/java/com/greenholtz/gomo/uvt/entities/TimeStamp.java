@@ -42,7 +42,7 @@ public class TimeStamp implements Comparable<TimeStamp> {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder("(").append(id).append(type.shortDisplay()).append(")").append(timeMilis).toString();
+		return new StringBuilder("(").append(id).append((type==null?"null":type.shortDisplay())).append(")").append(timeMilis).toString();
 	}
 	
 	@Override
