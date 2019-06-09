@@ -120,6 +120,10 @@ public class UVTAlgorithm {
 	 * @return trimmed time view list
 	 */
 	static List<TimeStamp> trimReviewedValuesFromTimeStampList(List<TimeStamp> allViewTimestamps, List<TimeStamp> uniqueSegments) {
+		if (uniqueSegments.get(uniqueSegments.size()-1).equals(allViewTimestamps.get(0))) {
+			allViewTimestamps.clear();
+			return allViewTimestamps;
+		}
 		return allViewTimestamps.subList(0, allViewTimestamps.indexOf(uniqueSegments.get(uniqueSegments.size()-2))+1);
 	}
 	

@@ -131,6 +131,23 @@ public class UVTAlgorithmTest extends AbstractTest{
 		Assert.assertEquals(12l, (long)farthest.getTimeMilis());
 	}
 	
+	@Test
+	public void testTrimReviewedValuesFromTimeStampList_LastValue() {
+		List<TimeStamp> times = getTimeStampList_OneIteration();
+		List<TimeStamp> uniqueSegments = Arrays.asList(times.get(0));
+		times = UVTAlgorithm.trimReviewedValuesFromTimeStampList(times, uniqueSegments);
+		Assert.assertEquals(0, times.size());
+	}
+	
+	@Test
+	public void testTrimReviewedValuesFromTimeStampList_IntermediateValue() {
+		List<TimeStamp> times = getTimeStampList_OneIteration();
+		List<TimeStamp> uniqueSegments = Arrays.asList(times.get(5), times.get(3));
+		TimeStamp timeToRemove = times.get(times.size()-1);
+		times = UVTAlgorithm.trimReviewedValuesFromTimeStampList(times, uniqueSegments);
+		Assert.assertEquals(6, times.size());
+		Assert.assertFalse(times.contains(timeToRemove));
+	}
 	
 
 }
