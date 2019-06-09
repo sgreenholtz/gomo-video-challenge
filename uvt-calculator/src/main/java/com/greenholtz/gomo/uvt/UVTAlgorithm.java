@@ -78,40 +78,30 @@ public class UVTAlgorithm {
 	
 	static TimeStamp getStartTimeClosestToBeginningFromIntermediaryTimes(List<TimeStamp> intermediaryTimestamps,
 			List<TimeStamp> times) {
-		List<TimeStamp> endingIntermediaryTimeStamps = intermediaryTimestamps.stream()
-				.filter(t->t.getType()==TimestampType.END)
-				.collect(Collectors.toList());
 		
-		TimeStamp endTimeWith = endingIntermediaryTimeStamps.stream()
+		List<TimeStamp> endingTimeStampsWithStartsNotInIntermediaryList = intermediaryTimestamps.stream()
+				.filter(t->t.getType()==TimestampType.END)
 				.filter(t->intermediaryTimestamps.stream()
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
-				.findFirst().get();
+				.collect(Collectors.toList());
 		
-		
+		return times.stream()
+				.filter(t->t.getType()==TimestampType.START)
+				.map(t->endingTimeStampsWithStartsNotInIntermediaryList.stream()
+						.filter(end->end.getId()==t.getId())
+						.findFirst()
+						.get())
+				.findFirst()
+				.get();
 	}
 	
 	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
 		uniqueSegments.addAll(getFinalUniqueSegment(times));
 		List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(times, uniqueSegments);
-		
-		//Step 4 - Which end has a start that is farthest away?
-		
-		
-		// Trim list of dups
-		times = times.subList(0, times.indexOf(startFinalTime));
-		System.out.println(times);
-		
-		// Get the start matching that end
-		TimeStamp farthestTime = times.stream()
-				.filter(t->t.getType()==TimestampType.START)
-				.filter(t->t.getId()==uniqueEndFarthest.getId())
-				.findFirst()
-				.get();
+		TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, times);
 		uniqueSegments.add(farthestTime);
-		
-		// Remove from original list
-		times.remove(farthestTime);
+		times = times.subList(0, times.indexOf(farthestTime));
 		
 		// Step 5 - Are there more left in the original list?
 		if (times.size()==0) {
