@@ -30,22 +30,17 @@ public class Launcher {
 				.append(System.lineSeparator())
 				.append("view ENDED, the next number is a START timestamp, the next number is an END timestamp, etc.")
 				.append(System.lineSeparator())
-				.append("You can also use the -i flag and input the timestamps, and use the -v flag to specify verbose output.");
-			System.out.println(helpMessage);			
+				.append("Use the -v flag to specify verbose output.");
+			System.out.println(helpMessage);
+			return;
 		} else if (args[0].equals("-v")) {
 			Logger root = (Logger) org.slf4j.LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		    root.setLevel(Level.DEBUG);
 		}
 		
-		if (Arrays.asList(args).contains("-i")) {
-			int inputFlagIndex = Arrays.asList(args).indexOf("-i");
-			String[] timeSegmentArr = Arrays.copyOfRange(args, inputFlagIndex+1, args.length-1);
-			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentArr);
-		} else {
-			Console console = System.console();
-			String timeSegmentsStr = console.readLine("Input view time segments: ");
-			UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentsStr);
-		}
+		Console console = System.console();
+		String timeSegmentsStr = console.readLine("Input view time segments: ");
+		UVTAlgorithm.uniqueViewTimeCalculator(timeSegmentsStr);
 		
 	}
 	

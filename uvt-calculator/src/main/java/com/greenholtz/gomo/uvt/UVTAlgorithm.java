@@ -17,18 +17,6 @@ public class UVTAlgorithm {
 		logger.debug("First, we parse out the view time segements inputted into the application.");
 		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
 		logger.debug("Parsed!");
-		return calculatorAlgorithmAfterParsingInput(timeStamps);
-	}
-	
-	public static long uniqueViewTimeCalculator(String[] allViewTimestamps) {
-		logger.info("Starting to calculate the Unique View Time (UVT)");
-		logger.debug("First, we parse out the view time segements inputted into the application.");
-		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
-		logger.debug("Parsed!");
-		return calculatorAlgorithmAfterParsingInput(timeStamps);
-	}
-	
-	private static long calculatorAlgorithmAfterParsingInput(List<TimeStamp> timeStamps) {
 		logger.debug("Next, we sort the time segments according to the timestamp in milliseconds.");
 		sort(timeStamps);
 		logger.debug("Sorted!");
