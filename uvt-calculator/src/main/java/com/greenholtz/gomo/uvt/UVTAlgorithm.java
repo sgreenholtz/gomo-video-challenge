@@ -61,28 +61,42 @@ public class UVTAlgorithm {
 		return times;
 	}
 	
-	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
-		List<TimeStamp> uniqueSegments = new ArrayList<>();
-		
-		// Step 2 - Look at the last end time. Find its matching start time and its position
+	static List<TimeStamp> getFinalUniqueSegment(List<TimeStamp> times) {
+		List<TimeStamp> segments = new ArrayList<>();
 		int finalTimeId = times.get(times.size()-1).getId();
-		TimeStamp startFinalTime = times.stream().filter(t->t.getId()==finalTimeId).filter(t->t.getType()==TimestampType.START).findFirst().orElse(null);
-		uniqueSegments.add(times.get(times.size()-1));
-		uniqueSegments.add(startFinalTime);
-		
-		// Step 3 - Figure out what times are in between the start and end of part 2
-		int startFinalTimePosition = times.indexOf(startFinalTime);
-		List<TimeStamp> intermediaryTimestamps = times.subList(startFinalTimePosition+1, times.size()-1);
-		
-		//Step 4 - Which end has a start that is farthest away?
-		List<TimeStamp> ends = intermediaryTimestamps.stream()
+		TimeStamp startFinalTime = TimeStampUtils.getStartFromEnd(times, finalTimeId);
+		segments.add(times.get(times.size()-1));
+		segments.add(startFinalTime);
+		return segments;
+	}
+	
+	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> times, List<TimeStamp> segments) {
+		int startIndex = times.indexOf(segments.get(segments.size()-2));
+		int endIndex = times.indexOf(segments.get(segments.size()-1));
+		return times.subList(startIndex, endIndex);
+	}
+	
+	static TimeStamp getStartTimeClosestToBeginningFromIntermediaryTimes(List<TimeStamp> intermediaryTimestamps,
+			List<TimeStamp> times) {
+		List<TimeStamp> endingIntermediaryTimeStamps = intermediaryTimestamps.stream()
 				.filter(t->t.getType()==TimestampType.END)
 				.collect(Collectors.toList());
 		
-		TimeStamp uniqueEndFarthest = ends.stream()
+		TimeStamp endTimeWith = endingIntermediaryTimeStamps.stream()
 				.filter(t->intermediaryTimestamps.stream()
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
 				.findFirst().get();
+		
+		
+	}
+	
+	static List<TimeStamp> getUniqueViewSegments(List<TimeStamp> times) {
+		List<TimeStamp> uniqueSegments = new ArrayList<>();
+		uniqueSegments.addAll(getFinalUniqueSegment(times));
+		List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(times, uniqueSegments);
+		
+		//Step 4 - Which end has a start that is farthest away?
+		
 		
 		// Trim list of dups
 		times = times.subList(0, times.indexOf(startFinalTime));
