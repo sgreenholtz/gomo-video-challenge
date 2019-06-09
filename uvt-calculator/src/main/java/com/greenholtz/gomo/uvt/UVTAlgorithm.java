@@ -86,6 +86,10 @@ public class UVTAlgorithm {
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
 				.collect(Collectors.toList());
 		
+		if (endingTimeStampsWithStartsNotInIntermediaryList.size()==0) {
+			return allViewTimestamps.get(0);
+		}
+		
 		return allViewTimestamps.stream()
 				.filter(t->t.getType()==TimestampType.START)
 				.filter(t->endingTimeStampsWithStartsNotInIntermediaryList.stream()
@@ -98,21 +102,21 @@ public class UVTAlgorithm {
 		List<TimeStamp> uniqueSegments = new ArrayList<>();
 		uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
 		
-		while (allViewTimestamps.size()>0) {
+		while (allViewTimestamps.size()>1) {
 			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
 			TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
 			uniqueSegments.add(farthestTime);
 			allViewTimestamps = trimReviewedValuesFromTimeStampList(allViewTimestamps, uniqueSegments);
 		}
-		
 		return uniqueSegments;
 	}
 	
 	/**
-	 * Trims the 
+	 * Trims the values from the list of all view times that have been examined
+	 * and reviewed by the algorithm
 	 * @param allViewTimestamps
 	 * @param uniqueSegments
-	 * @return
+	 * @return trimmed time view list
 	 */
 	static List<TimeStamp> trimReviewedValuesFromTimeStampList(List<TimeStamp> allViewTimestamps, List<TimeStamp> uniqueSegments) {
 		return allViewTimestamps.subList(0, allViewTimestamps.indexOf(uniqueSegments.get(uniqueSegments.size()-2))+1);
