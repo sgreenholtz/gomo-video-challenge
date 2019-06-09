@@ -21,5 +21,12 @@ public class TimeStampUtilsTest extends AbstractTest{
 		TimeStamp end = TimeStampUtils.getEndFromStart(timeStampList, 3);
 		Assert.assertEquals(timeStampList.get(4), end);
 	}
+	
+	@Test
+	public void testTrimLastTwoTimestampsFromList() {
+		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
+		List<TimeStamp> trimmedList = TimeStampUtils.trimLastTwoTimestampsFromList(timeStampList);
+		Assert.assertEquals(timeStampList.size()-2, trimmedList.size());
+	}
 
 }

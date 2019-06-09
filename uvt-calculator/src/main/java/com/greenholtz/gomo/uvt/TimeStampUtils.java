@@ -23,5 +23,9 @@ public class TimeStampUtils {
 	private static Stream<TimeStamp> filterStreamById(List<TimeStamp> times, int id) {
 		return times.stream().filter(t->t.getId()==id);
 	}
+	
+	public static List<TimeStamp> trimLastTwoTimestampsFromList(List<TimeStamp> allTimeStamps) {
+		return allTimeStamps.subList(0, allTimeStamps.size()-2);
+	}
 
 }

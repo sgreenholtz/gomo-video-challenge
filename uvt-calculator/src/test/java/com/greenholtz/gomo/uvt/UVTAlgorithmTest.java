@@ -27,7 +27,7 @@ public class UVTAlgorithmTest extends AbstractTest{
 	@Test
 	public void testUniqueViewTimeCalculator_SomeSegmentsNextToEachOther() {
 		long uvt = UVTAlgorithm.uniqueViewTimeCalculator(getTimeStampListString_SomeSegmentsNextToEachOther());
-		Assert.assertEquals(92l, uvt);
+		Assert.assertEquals(78l, uvt);
 	}
 
 	@Test

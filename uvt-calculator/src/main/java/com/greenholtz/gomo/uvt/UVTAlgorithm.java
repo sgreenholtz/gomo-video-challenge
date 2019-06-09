@@ -72,7 +72,7 @@ public class UVTAlgorithm {
 	}
 	
 	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> allViewTimestamps, List<TimeStamp> segments) {
-		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1));
+		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1))+1;
 		int endIndex = allViewTimestamps.indexOf(segments.get(segments.size()-2));
 		return allViewTimestamps.subList(startIndex, endIndex);
 	}
@@ -85,10 +85,6 @@ public class UVTAlgorithm {
 				.filter(t->intermediaryTimestamps.stream()
 						.noneMatch(s->s.getId()==t.getId()&&s.getType()==TimestampType.START))
 				.collect(Collectors.toList());
-		
-		if (endingTimeStampsWithStartsNotInIntermediaryList.size()==0) {
-			return allViewTimestamps.get(0);
-		}
 		
 		return allViewTimestamps.stream()
 				.filter(t->t.getType()==TimestampType.START)
@@ -104,9 +100,14 @@ public class UVTAlgorithm {
 		
 		while (allViewTimestamps.size()>1) {
 			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
-			TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
-			uniqueSegments.add(farthestTime);
-			allViewTimestamps = trimReviewedValuesFromTimeStampList(allViewTimestamps, uniqueSegments);
+			if (intermediaryTimestamps.size()==0) {
+				allViewTimestamps = TimeStampUtils.trimLastTwoTimestampsFromList(allViewTimestamps);
+				uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
+			} else {
+				TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
+				uniqueSegments.add(farthestTime);
+				allViewTimestamps = trimReviewedValuesFromTimeStampList(allViewTimestamps, uniqueSegments);
+			}
 		}
 		return uniqueSegments;
 	}
