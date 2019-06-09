@@ -142,6 +142,9 @@ public class UVTAlgorithm {
 	
 	
 	static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
+		while (uniqueSegments.size()>2) {
+			
+		}
 		return calculateUVTFromSegmentList(uniqueSegments, 0l);
 	}
 	
