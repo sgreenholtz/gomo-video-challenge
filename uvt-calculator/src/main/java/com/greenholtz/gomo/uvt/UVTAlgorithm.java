@@ -11,7 +11,7 @@ public class UVTAlgorithm {
 	
 	private static Logger logger = LoggerFactory.getLogger(UVTAlgorithm.class);
 	
-	public static void uniqueViewTimeCalculator(String allViewTimestamps) {
+	public static long uniqueViewTimeCalculator(String allViewTimestamps) {
 		logger.info("Starting to calculate the Unique View Time (UVT)");
 		logger.info("First, we parse out the view time segements inputted into the application.");
 		List<TimeStamp> timeStamps = parseTimeSegments(allViewTimestamps);
@@ -29,6 +29,7 @@ public class UVTAlgorithm {
 		logger.info("Finally, we find the view time between each unique segment and add it up.");
 		long uniqueViewTime = calculateUniqueViewTime(uniqueSegments);
 		logger.info("Here is the calculated UVT: " + uniqueViewTime);
+		return uniqueViewTime;
 	}
 	
 	/**
@@ -71,8 +72,8 @@ public class UVTAlgorithm {
 	}
 	
 	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> allViewTimestamps, List<TimeStamp> segments) {
-		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-2));
-		int endIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1));
+		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1));
+		int endIndex = allViewTimestamps.indexOf(segments.get(segments.size()-2));
 		return allViewTimestamps.subList(startIndex, endIndex);
 	}
 	
@@ -101,13 +102,20 @@ public class UVTAlgorithm {
 			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
 			TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
 			uniqueSegments.add(farthestTime);
-			allViewTimestamps = allViewTimestamps.subList(0, allViewTimestamps.indexOf(farthestTime));
+			allViewTimestamps = trimReviewedValuesFromTimeStampList(allViewTimestamps, uniqueSegments);
 		}
-	
-		// Put the allViewTimestamps back in time order
-		Collections.reverse(uniqueSegments);
 		
 		return uniqueSegments;
+	}
+	
+	/**
+	 * Trims the 
+	 * @param allViewTimestamps
+	 * @param uniqueSegments
+	 * @return
+	 */
+	static List<TimeStamp> trimReviewedValuesFromTimeStampList(List<TimeStamp> allViewTimestamps, List<TimeStamp> uniqueSegments) {
+		return allViewTimestamps.subList(0, allViewTimestamps.indexOf(uniqueSegments.get(uniqueSegments.size()-2))+1);
 	}
 	
 	/**

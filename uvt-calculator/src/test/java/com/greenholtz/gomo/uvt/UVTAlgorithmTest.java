@@ -1,7 +1,5 @@
 package com.greenholtz.gomo.uvt;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,11 +10,18 @@ import org.junit.Test;
 import com.greenholtz.gomo.uvt.entities.TimeStamp;
 import com.greenholtz.gomo.uvt.entities.TimestampType;
 
-public class UVTAlgorithmTest {
+public class UVTAlgorithmTest extends AbstractTest{
 
 	@Test
-	public void testUniqueViewTimeCalculator() {
-		fail("Not yet implemented");
+	public void testUniqueViewTimeCalculator_OneIteration() {
+		long uvt = UVTAlgorithm.uniqueViewTimeCalculator(getTimeStampListString_OneIteration());
+		Assert.assertEquals(95l, uvt);
+	}
+	
+	@Test
+	public void testUniqueViewTimeCalculator_TwoIterations() {
+		long uvt = UVTAlgorithm.uniqueViewTimeCalculator(getTimeStampListString_TwoIterations());
+		Assert.assertEquals(92l, uvt);
 	}
 
 	@Test
@@ -36,11 +41,23 @@ public class UVTAlgorithmTest {
 		Assert.assertEquals(TimestampType.START, actual.get(4).getType());
 		Assert.assertEquals(1, actual.get(3).getId());
 	}
+	
+	@Test
+	public void testGetTimestampsBetweenLastAddedUniqueSegment() {
+		List<TimeStamp> allTimeStamps = getTimeStampList_OneIteration();
+		List<TimeStamp> uniqueTimeStamps = new ArrayList<>();
+		uniqueTimeStamps.add(allTimeStamps.get(7));
+		uniqueTimeStamps.add(allTimeStamps.get(2));
+		allTimeStamps = UVTAlgorithm.getTimestampsBetweenLastAddedUniqueSegment(allTimeStamps, uniqueTimeStamps);
+		Assert.assertEquals(4, allTimeStamps.size());
+		Assert.assertEquals(25l, (long)allTimeStamps.get(0).getTimeMilis());
+	}
 
 	@Test
 	public void testGetUniqueViewSegments() {
-		List<TimeStamp> uniqueTimeStamps = UVTAlgorithm.getUniqueViewSegments(getTimeStampList());
-		Assert.assertEquals(0, uniqueTimeStamps.size());
+		List<TimeStamp> uniqueTimeStamps = UVTAlgorithm.getUniqueViewSegments(getTimeStampList_OneIteration());
+		Assert.assertEquals(3, uniqueTimeStamps.size());
+		Assert.assertEquals(12l, (long)uniqueTimeStamps.get(2).getTimeMilis());
 	}
 
 	@Test
@@ -98,7 +115,7 @@ public class UVTAlgorithmTest {
 	
 	@Test
 	public void testGetStartTimeClosestToBeginningFromIntermediaryTimes() {
-		List<TimeStamp> times = getTimeStampList();
+		List<TimeStamp> times = getTimeStampList_OneIteration();
 		List<TimeStamp> intermediary = new ArrayList<>();
 		intermediary.add(new TimeStamp(1, TimestampType.START, 25l));
 		intermediary.add(new TimeStamp(3, TimestampType.END, 30l));
@@ -108,17 +125,6 @@ public class UVTAlgorithmTest {
 		Assert.assertEquals(12l, (long)farthest.getTimeMilis());
 	}
 	
-	private ArrayList<TimeStamp> getTimeStampList() {
-		ArrayList<TimeStamp> times = new ArrayList<>();
-		times.add(new TimeStamp(0, TimestampType.START, 12l));
-		times.add(new TimeStamp(3, TimestampType.START, 15l));
-		times.add(new TimeStamp(2, TimestampType.START, 20l));
-		times.add(new TimeStamp(1, TimestampType.START, 25l));
-		times.add(new TimeStamp(3, TimestampType.END, 30l));
-		times.add(new TimeStamp(1, TimestampType.END, 38l));
-		times.add(new TimeStamp(0, TimestampType.END, 94l));
-		times.add(new TimeStamp(2, TimestampType.END, 107l));
-		return times;
-	}
+	
 
 }
