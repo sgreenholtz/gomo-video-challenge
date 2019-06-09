@@ -28,5 +28,26 @@ public class TimeStampListUtilsTest extends AbstractTest{
 		List<TimeStamp> trimmedList = TimeStampListUtils.trimLastTwoTimestampsFromList(timeStampList);
 		Assert.assertEquals(timeStampList.size()-2, trimmedList.size());
 	}
+	
+	@Test
+	public void testGetLast() {
+		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
+		TimeStamp last = TimeStampListUtils.getLast(timeStampList);
+		Assert.assertEquals(107l, (long)last.getTimeMilis());
+	}
+	
+	@Test
+	public void testGetFromBack_Final() {
+		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
+		TimeStamp last = TimeStampListUtils.getFromBack(timeStampList, 0);
+		Assert.assertEquals(107l, (long)last.getTimeMilis());
+	}
+	
+	@Test
+	public void testGetFromBack_Middle() {
+		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
+		TimeStamp last = TimeStampListUtils.getFromBack(timeStampList, 3);
+		Assert.assertEquals(30l, (long)last.getTimeMilis());		
+	}
 
 }
