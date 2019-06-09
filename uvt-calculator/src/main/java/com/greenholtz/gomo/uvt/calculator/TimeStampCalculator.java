@@ -3,6 +3,7 @@ package com.greenholtz.gomo.uvt.calculator;
 import java.util.List;
 
 import com.greenholtz.gomo.uvt.entities.TimeStamp;
+import com.greenholtz.gomo.uvt.entities.TimestampType;
 
 /**
  * Contains methods to separate different cases of 
@@ -16,23 +17,46 @@ public class TimeStampCalculator {
 	public long getRunningTotal() {
 		return runningTotal;
 	}
-	
-	private long differenceBetweenFirstTwoValues(List<TimeStamp> uniqueTimeStamps) {
-		return uniqueTimeStamps.get(0).getTimeMilis() - uniqueTimeStamps.get(1).getTimeMilis();
+		
+	public long calculateTotalUniqueViewTime(List<TimeStamp> uniqueSegments) {
+		
+		while (uniqueSegments.size()>2) {
+			runningTotal += calculateTotalFromThreeTimeStampSegment(uniqueSegments);
+			uniqueSegments.remove(0);
+			uniqueSegments.remove(0);
+		}
+		return 0l;
 	}
 	
-//	public 
+	private long calculateTotalFromThreeTimeStampSegment(List<TimeStamp> uniqueSegments) {
+		if (uniqueSegments.get(1).getType()==TimestampType.START
+				&& uniqueSegments.get(2).getType()==TimestampType.START) {
+			return addBothDifferences(getArrayFirstThreeValues(uniqueSegments));
+		} else if (uniqueSegments.get(0).getType()==TimestampType.START) {
+			return addSecondDifference(getArrayFirstThreeValues(uniqueSegments));
+		} else {
+			return addFirstDifference(getArrayFirstThreeValues(uniqueSegments));
+		}
+	}
 
+	private TimeStamp[] getArrayFirstThreeValues(List<TimeStamp> uniqueSegments) {
+		TimeStamp[] timeStampArray = new TimeStamp[3];
+		uniqueSegments.subList(0, 2).toArray(timeStampArray);
+		return timeStampArray;
+	}
+	
 	/**
 	 * 1E 2S 3S
 	 * (1E - 2S) + (2S - 3S)
-	 * end-start
-	 * trim end
-	 * start-start
+	 * 
+	 * or
+	 * 
+	 * 1S 2S 3S
+	 * (1S - 2S) + (2S - 3S)
 	 * @param uniqueTimeStamps
 	 * @return modified List
 	 */
-	public long endStartStart(TimeStamp...timeStamps) {
+	public long addBothDifferences(TimeStamp...timeStamps) {
 		return (timeStamps[0].getTimeMilis()-timeStamps[1].getTimeMilis()) 
 				+ (timeStamps[1].getTimeMilis()-timeStamps[2].getTimeMilis());
 	}
@@ -46,23 +70,8 @@ public class TimeStampCalculator {
 	 * @param uniqueTimeStamps
 	 * @return
 	 */
-	public long endStartEnd(TimeStamp...timeStamps) {
+	public long addFirstDifference(TimeStamp...timeStamps) {
 		return timeStamps[0].getTimeMilis() - timeStamps[1].getTimeMilis();
-	}
-	
-	
-	/**
-	 * 1S 2S 3S
-	 * (1S - 2S) + (2S - 3S)
-	 * start1-start2
-	 * trim start1
-	 * start2-start3
-	 * trim start2
-	 * @param uniqueTimeStamps
-	 * @return
-	 */
-	public long startStartStart(TimeStamp...timeStamps) {
-		return endStartStart(timeStamps);
 	}
 	
 	/**
@@ -73,7 +82,7 @@ public class TimeStampCalculator {
 	 * @param uniqueTimeStamps
 	 * @return
 	 */
-	public long startEndStart(TimeStamp...timeStamps) {
-		return endStartEnd(timeStamps);
+	public long addSecondDifference(TimeStamp...timeStamps) {
+		return timeStamps[1].getTimeMilis() - timeStamps[2].getTimeMilis();
 	}
 }
