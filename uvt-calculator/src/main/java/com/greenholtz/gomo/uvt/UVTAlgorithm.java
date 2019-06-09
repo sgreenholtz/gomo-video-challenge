@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.greenholtz.gomo.uvt.calculator.TimeStampCalculator;
 import com.greenholtz.gomo.uvt.entities.TimeStamp;
 import com.greenholtz.gomo.uvt.entities.TimestampType;
 public class UVTAlgorithm {
@@ -140,36 +141,14 @@ public class UVTAlgorithm {
 		return allViewTimestamps;
 	}
 	
-	
-	static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
-		while (uniqueSegments.size()>2) {
-			
-		}
-		return calculateUVTFromSegmentList(uniqueSegments, 0l);
-	}
-	
 	/**
-	 * Uses recursion to calculate the total unique view time by finding the
-	 * difference between the different start and end allViewTimestamps. Sorted with last timestamp
-	 * first.
-	 * @param uniqueSegments List of TimeStamp object representing start and end
-	 * times of unique views
-	 * @param runningTotal 
-	 * @return Long of total unique view time
+	 * Uses the TimeStampCalculator to calculator the total unique view time
+	 * @param uniqueSegments
+	 * @return
 	 */
-	static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
-		if (uniqueSegments.get(1).getType()==TimestampType.START) {
-			runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
-		}	
-		if (uniqueSegments.get(0).getId()==uniqueSegments.get(1).getId()
-				&&uniqueSegments.get(2).getType()==TimestampType.END) {
-			uniqueSegments.remove(uniqueSegments.get(0));
-		}
-		uniqueSegments.remove(uniqueSegments.get(0));
-		if (uniqueSegments.size()>1) {
-			runningTotal = calculateUVTFromSegmentList(uniqueSegments, runningTotal);
-		}
-		return runningTotal;
+	static long calculateUniqueViewTime(List<TimeStamp> uniqueSegments) {
+		TimeStampCalculator calculator = new TimeStampCalculator();
+		return calculator.calculateTotalUniqueViewTime(uniqueSegments);
 	}
 
 }

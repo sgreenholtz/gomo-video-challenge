@@ -85,7 +85,7 @@ public class UVTAlgorithmTest extends AbstractTest{
 	public void testSort_SameTimes() {
 		TimeStamp start = new TimeStamp(0, TimestampType.START, 1l);
 		TimeStamp end = new TimeStamp(0, TimestampType.END, 1l);
-		TimeStamp third = new TimeStamp(0, null, 0l);
+		TimeStamp third = new TimeStamp(0, TimestampType.START, 0l);
 		List<TimeStamp> timeList = Arrays.asList(start, end, third);
 		UVTAlgorithm.sort(timeList);
 		Assert.assertEquals(start, timeList.get(1));
@@ -95,10 +95,10 @@ public class UVTAlgorithmTest extends AbstractTest{
 	@Test
 	public void testCalculateUVTFromSegmentList() {
 		List<TimeStamp> segments = new ArrayList<TimeStamp>(); 
-		segments.add(new TimeStamp(0, null, 100l)); 
-		segments.add(new TimeStamp(0, null, 50l));
-		segments.add(new TimeStamp(0, null, 25l));
-		long viewTime = UVTAlgorithm.calculateUVTFromSegmentList(segments, 0l);
+		segments.add(new TimeStamp(0, TimestampType.END, 100l)); 
+		segments.add(new TimeStamp(0, TimestampType.START, 50l));
+		segments.add(new TimeStamp(0, TimestampType.START, 25l));
+		long viewTime = UVTAlgorithm.calculateUniqueViewTime(segments);
 		long expected = 75l;
 		Assert.assertEquals(expected, viewTime);
 	}
@@ -106,10 +106,10 @@ public class UVTAlgorithmTest extends AbstractTest{
 	@Test
 	public void testCalculateUVTFromSegmentList_SameTimes() {
 		List<TimeStamp> segments = new ArrayList<TimeStamp>(); 
-		segments.add(new TimeStamp(0, null, 50l)); 
-		segments.add(new TimeStamp(0, null, 50l));
-		segments.add(new TimeStamp(0, null, 25l));
-		long viewTime = UVTAlgorithm.calculateUVTFromSegmentList(segments, 0l);
+		segments.add(new TimeStamp(0, TimestampType.END, 50l)); 
+		segments.add(new TimeStamp(0, TimestampType.START, 50l));
+		segments.add(new TimeStamp(0, TimestampType.START, 25l));
+		long viewTime = UVTAlgorithm.calculateUniqueViewTime(segments);
 		long expected = 25l;
 		Assert.assertEquals(expected, viewTime);
 	}
@@ -117,10 +117,10 @@ public class UVTAlgorithmTest extends AbstractTest{
 	@Test
 	public void testCalculateUVTFromSegmentList_WrongOrder() {
 		List<TimeStamp> segments = new ArrayList<TimeStamp>(); 
-		segments.add(new TimeStamp(0, null, 25l));
-		segments.add(new TimeStamp(0, null, 50l)); 
-		segments.add(new TimeStamp(0, null, 100l));
-		long viewTime = UVTAlgorithm.calculateUVTFromSegmentList(segments, 0l);
+		segments.add(new TimeStamp(0, TimestampType.START, 25l));
+		segments.add(new TimeStamp(0, TimestampType.START, 50l)); 
+		segments.add(new TimeStamp(0, TimestampType.END, 100l));
+		long viewTime = UVTAlgorithm.calculateUniqueViewTime(segments);
 		long expected = 75l;
 		Assert.assertNotEquals(expected, viewTime);
 	}
