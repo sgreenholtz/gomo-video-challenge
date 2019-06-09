@@ -64,7 +64,7 @@ public class UVTAlgorithm {
 	
 	static List<TimeStamp> getFinalUniqueSegment(List<TimeStamp> allViewTimestamps) {
 		List<TimeStamp> segments = new ArrayList<>();
-		int finalTimeId = allViewTimestamps.get(allViewTimestamps.size()-1).getId();
+		int finalTimeId = TimeStampListUtils.getLast(allViewTimestamps).getId();
 		TimeStamp startFinalTime = TimeStampListUtils.getStartFromEnd(allViewTimestamps, finalTimeId);
 		segments.add(TimeStampListUtils.getLast(allViewTimestamps));
 		segments.add(startFinalTime);
@@ -120,11 +120,11 @@ public class UVTAlgorithm {
 	 * @return trimmed time view list
 	 */
 	static List<TimeStamp> trimReviewedValuesFromTimeStampList(List<TimeStamp> allViewTimestamps, List<TimeStamp> uniqueSegments) {
-		if (uniqueSegments.get(uniqueSegments.size()-1).equals(allViewTimestamps.get(0))) {
+		if (TimeStampListUtils.getLast(uniqueSegments).equals(allViewTimestamps.get(0))) {
 			allViewTimestamps.clear();
 			return allViewTimestamps;
 		}
-		return allViewTimestamps.subList(0, allViewTimestamps.indexOf(uniqueSegments.get(uniqueSegments.size()-2))+1);
+		return allViewTimestamps.subList(0, allViewTimestamps.indexOf(TimeStampListUtils.getFromBack(uniqueSegments, 1))+1);
 	}
 	
 	/**
