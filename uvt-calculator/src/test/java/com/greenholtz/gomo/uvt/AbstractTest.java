@@ -30,7 +30,6 @@ public abstract class AbstractTest {
 	
 	protected ArrayList<TimeStamp> getTimeStampList_TwoIterations() {
 		ArrayList<TimeStamp> times = new ArrayList<>();
-		
 		times.add(new TimeStamp(3, TimestampType.START, 15l));
 		times.add(new TimeStamp(1, TimestampType.START, 25l));
 		times.add(new TimeStamp(3, TimestampType.END, 30l));
@@ -38,6 +37,23 @@ public abstract class AbstractTest {
 		times.add(new TimeStamp(1, TimestampType.END, 38l));
 		times.add(new TimeStamp(2, TimestampType.START, 80l));
 		times.add(new TimeStamp(0, TimestampType.END, 94l));
+		times.add(new TimeStamp(2, TimestampType.END, 107l));
+		return times;
+	}
+	
+	protected String getTimeStampListString_SomeSegmentsNextToEachOther() {
+		return "38 80 25 31 94 107 15 30";
+	}
+	
+	protected ArrayList<TimeStamp> getTimeStampList_SomeSegmentsNextToEachOther() {
+		ArrayList<TimeStamp> times = new ArrayList<>();
+		times.add(new TimeStamp(3, TimestampType.START, 15l));
+		times.add(new TimeStamp(1, TimestampType.START, 25l));
+		times.add(new TimeStamp(3, TimestampType.END, 30l));
+		times.add(new TimeStamp(1, TimestampType.END, 31l));
+		times.add(new TimeStamp(0, TimestampType.START, 38l));
+		times.add(new TimeStamp(0, TimestampType.END, 80l));
+		times.add(new TimeStamp(2, TimestampType.START, 94l));
 		times.add(new TimeStamp(2, TimestampType.END, 107l));
 		return times;
 	}
