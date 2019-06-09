@@ -65,15 +65,15 @@ public class UVTAlgorithm {
 	static List<TimeStamp> getFinalUniqueSegment(List<TimeStamp> allViewTimestamps) {
 		List<TimeStamp> segments = new ArrayList<>();
 		int finalTimeId = allViewTimestamps.get(allViewTimestamps.size()-1).getId();
-		TimeStamp startFinalTime = TimeStampUtils.getStartFromEnd(allViewTimestamps, finalTimeId);
-		segments.add(allViewTimestamps.get(allViewTimestamps.size()-1));
+		TimeStamp startFinalTime = TimeStampListUtils.getStartFromEnd(allViewTimestamps, finalTimeId);
+		segments.add(TimeStampListUtils.getLast(allViewTimestamps));
 		segments.add(startFinalTime);
 		return segments;
 	}
 	
 	static List<TimeStamp> getTimestampsBetweenLastAddedUniqueSegment(List<TimeStamp> allViewTimestamps, List<TimeStamp> segments) {
-		int startIndex = allViewTimestamps.indexOf(segments.get(segments.size()-1))+1;
-		int endIndex = allViewTimestamps.indexOf(segments.get(segments.size()-2));
+		int startIndex = allViewTimestamps.indexOf(TimeStampListUtils.getLast(segments))+1;
+		int endIndex = allViewTimestamps.indexOf(TimeStampListUtils.getFromBack(segments, 1));
 		return allViewTimestamps.subList(startIndex, endIndex);
 	}
 	
@@ -101,7 +101,7 @@ public class UVTAlgorithm {
 		while (allViewTimestamps.size()>1) {
 			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
 			if (intermediaryTimestamps.size()==0) {
-				allViewTimestamps = TimeStampUtils.trimLastTwoTimestampsFromList(allViewTimestamps);
+				allViewTimestamps = TimeStampListUtils.trimLastTwoTimestampsFromList(allViewTimestamps);
 				uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
 			} else {
 				TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);

@@ -6,26 +6,26 @@ import org.junit.Test;
 import com.greenholtz.gomo.uvt.entities.TimeStamp;
 
 
-public class TimeStampUtilsTest extends AbstractTest{
+public class TimeStampListUtilsTest extends AbstractTest{
 
 	@Test
 	public void testGetStartFromEnd() {
 		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
-		TimeStamp start = TimeStampUtils.getStartFromEnd(timeStampList, 2);
+		TimeStamp start = TimeStampListUtils.getStartFromEnd(timeStampList, 2);
 		Assert.assertEquals(timeStampList.get(2), start);
 	}
 
 	@Test
 	public void testGetEndFromStart() {
 		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
-		TimeStamp end = TimeStampUtils.getEndFromStart(timeStampList, 3);
+		TimeStamp end = TimeStampListUtils.getEndFromStart(timeStampList, 3);
 		Assert.assertEquals(timeStampList.get(4), end);
 	}
 	
 	@Test
 	public void testTrimLastTwoTimestampsFromList() {
 		List<TimeStamp> timeStampList = getTimeStampList_OneIteration();
-		List<TimeStamp> trimmedList = TimeStampUtils.trimLastTwoTimestampsFromList(timeStampList);
+		List<TimeStamp> trimmedList = TimeStampListUtils.trimLastTwoTimestampsFromList(timeStampList);
 		Assert.assertEquals(timeStampList.size()-2, trimmedList.size());
 	}
 
