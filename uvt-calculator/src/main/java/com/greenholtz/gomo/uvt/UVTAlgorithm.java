@@ -102,7 +102,10 @@ public class UVTAlgorithm {
 			List<TimeStamp> intermediaryTimestamps = getTimestampsBetweenLastAddedUniqueSegment(allViewTimestamps, uniqueSegments);
 			if (intermediaryTimestamps.size()==0) {
 				allViewTimestamps = TimeStampListUtils.trimLastTwoTimestampsFromList(allViewTimestamps);
-				uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
+				if (!allViewTimestamps.isEmpty()) {
+					uniqueSegments.addAll(getFinalUniqueSegment(allViewTimestamps));
+				}
+				
 			} else {
 				TimeStamp farthestTime = getStartTimeClosestToBeginningFromIntermediaryTimes(intermediaryTimestamps, allViewTimestamps);
 				uniqueSegments.add(farthestTime);
@@ -152,7 +155,13 @@ public class UVTAlgorithm {
 	 * @return Long of total unique view time
 	 */
 	static long calculateUVTFromSegmentList(List<TimeStamp> uniqueSegments, long runningTotal) {
-		runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
+		if (uniqueSegments.get(1).getType()==TimestampType.START) {
+			runningTotal += uniqueSegments.get(0).getTimeMilis() - uniqueSegments.get(1).getTimeMilis();
+		}	
+		if (uniqueSegments.get(0).getId()==uniqueSegments.get(1).getId()
+				&&uniqueSegments.get(2).getType()==TimestampType.END) {
+			uniqueSegments.remove(uniqueSegments.get(0));
+		}
 		uniqueSegments.remove(uniqueSegments.get(0));
 		if (uniqueSegments.size()>1) {
 			runningTotal = calculateUVTFromSegmentList(uniqueSegments, runningTotal);

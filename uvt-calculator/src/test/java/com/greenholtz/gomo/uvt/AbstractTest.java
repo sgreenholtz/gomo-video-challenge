@@ -57,4 +57,21 @@ public abstract class AbstractTest {
 		times.add(new TimeStamp(2, TimestampType.END, 107l));
 		return times;
 	}
+	
+	protected String getTimeStampListString_OnePairedSegment() {
+		return "25 94 12 15 38 107 20 30";
+	}
+	
+	protected ArrayList<TimeStamp> getTimeStampList_OnePairedSegment() {
+		ArrayList<TimeStamp> times = new ArrayList<>();
+		times.add(new TimeStamp(1, TimestampType.START, 12l));
+		times.add(new TimeStamp(1, TimestampType.END, 15l));
+		times.add(new TimeStamp(3, TimestampType.START, 20l));
+		times.add(new TimeStamp(0, TimestampType.START, 25l));
+		times.add(new TimeStamp(3, TimestampType.END, 30l));
+		times.add(new TimeStamp(2, TimestampType.START, 38l));
+		times.add(new TimeStamp(0, TimestampType.END, 94l));
+		times.add(new TimeStamp(2, TimestampType.END, 107l));
+		return times;
+	}
 }
