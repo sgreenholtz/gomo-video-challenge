@@ -30,7 +30,11 @@ public class UVTAlgorithmTest {
 
 	@Test
 	public void testParseTimeSegmentsStringArray() {
-		fail("Not yet implemented");
+		String[] times = {"12","94","14","38","99","107","15","30"};
+		List<TimeStamp> actual = UVTAlgorithm.parseTimeSegments(times);
+		Assert.assertEquals((long)94l, (long)actual.get(1).getTimeMilis());
+		Assert.assertEquals(TimestampType.START, actual.get(4).getType());
+		Assert.assertEquals(1, actual.get(3).getId());
 	}
 
 	@Test
