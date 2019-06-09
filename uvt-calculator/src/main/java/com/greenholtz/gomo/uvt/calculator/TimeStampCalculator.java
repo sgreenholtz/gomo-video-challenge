@@ -11,21 +11,15 @@ import com.greenholtz.gomo.uvt.entities.TimestampType;
  * @author smgre
  */
 public class TimeStampCalculator {
-	
-	private long runningTotal = 0;
-	
-	public long getRunningTotal() {
-		return runningTotal;
-	}
 		
 	public long calculateTotalUniqueViewTime(List<TimeStamp> uniqueSegments) {
-		
+		long runningTotal = 0;
 		while (uniqueSegments.size()>2) {
 			runningTotal += calculateTotalFromThreeTimeStampSegment(uniqueSegments);
 			uniqueSegments.remove(0);
 			uniqueSegments.remove(0);
 		}
-		return 0l;
+		return runningTotal;
 	}
 	
 	private long calculateTotalFromThreeTimeStampSegment(List<TimeStamp> uniqueSegments) {
@@ -41,7 +35,7 @@ public class TimeStampCalculator {
 
 	private TimeStamp[] getArrayFirstThreeValues(List<TimeStamp> uniqueSegments) {
 		TimeStamp[] timeStampArray = new TimeStamp[3];
-		uniqueSegments.subList(0, 2).toArray(timeStampArray);
+		uniqueSegments.subList(0, 3).toArray(timeStampArray);
 		return timeStampArray;
 	}
 	
@@ -57,8 +51,7 @@ public class TimeStampCalculator {
 	 * @return modified List
 	 */
 	public long addBothDifferences(TimeStamp...timeStamps) {
-		return (timeStamps[0].getTimeMilis()-timeStamps[1].getTimeMilis()) 
-				+ (timeStamps[1].getTimeMilis()-timeStamps[2].getTimeMilis());
+		return (timeStamps[0].getTimeMilis()-timeStamps[2].getTimeMilis());
 	}
 	
 	/**

@@ -2,25 +2,32 @@ package com.greenholtz.gomo.uvt.calculator;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
 import com.greenholtz.gomo.uvt.AbstractTest;
 import com.greenholtz.gomo.uvt.entities.TimeStamp;
+import com.greenholtz.gomo.uvt.entities.TimestampType;
 
 public class TimeStampCalculatorTest extends AbstractTest {
 
 	private TimeStampCalculator calculator = new TimeStampCalculator();
-	
-	@Test
-	public void testGetRunningTotal() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	public void testCalculateTotalUniqueViewTime() {
-		fail("Not yet implemented");
+		List<TimeStamp> uniqueSegments = new ArrayList<>();
+		uniqueSegments.add(new TimeStamp(0, TimestampType.END, 70l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.START, 60l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.START, 50l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.START, 40l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.START, 30l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.END, 25l));
+		uniqueSegments.add(new TimeStamp(0, TimestampType.START, 15l));
+		long total = calculator.calculateTotalUniqueViewTime(uniqueSegments);
+		assertEquals(50l, total);
 	}
 
 	@Test
